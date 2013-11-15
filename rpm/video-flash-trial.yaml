@@ -1,0 +1,29 @@
+Name: video-flash-trial
+Summary: My SailfishOS Application
+Version: 0.1
+Release: 5
+Group: Qt/Qt
+License: LICENSE
+Sources:
+- '%{name}-%{version}.tar.bz2'
+Description: |
+  Short description of my SailfishOS Application
+Configure: none
+Builder: qtc5
+PkgConfigBR:
+- sailfishapp
+- Qt5Quick
+- Qt5Qml
+- Qt5Core
+Requires:
+- sailfishsilica-qt5
+Files:
+- '%{_bindir}'
+- '%{_datadir}/%{name}/qml'
+- '%{_datadir}/applications/%{name}.desktop'
+- '%{_datadir}/icons/hicolor/90x90/apps/%{name}.png'
+- /usr/bin
+- /usr/share/video-flash-trial
+- /usr/share/applications
+- /usr/share/icons/hicolor/90x90/apps
+PkgBR: []
