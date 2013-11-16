@@ -14,16 +14,16 @@ Name:       video-flash-trial
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    My SailfishOS Application
 Version:    0.1
-Release:    9
+Release:    10
 Group:      Qt/Qt
 License:    LICENSE
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  video-flash-trial.yaml
 Requires:   sailfishsilica-qt5
-BuildRequires:  pkgconfig(Qt5Core)
-BuildRequires:  pkgconfig(Qt5Qml)
-BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(sailfishapp)
+BuildRequires:  pkgconfig(Qt5Quick)
+BuildRequires:  pkgconfig(Qt5Qml)
+BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  desktop-file-utils
 
 %description
@@ -62,13 +62,13 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-/usr/share/icons/hicolor/90x90/apps
-/usr/share/applications
-/usr/share/video-flash-trial
-/usr/bin
-%{_datadir}/icons/hicolor/90x90/apps/%{name}.png
-%{_datadir}/applications/%{name}.desktop
-%{_datadir}/%{name}/qml
 %{_bindir}
+%{_datadir}/%{name}/qml
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor/90x90/apps/%{name}.png
+/usr/bin
+/usr/share/video-flash-trial
+/usr/share/applications
+/usr/share/icons/hicolor/90x90/apps
 # >> files
 # << files

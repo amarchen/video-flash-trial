@@ -6,6 +6,18 @@ import QtMultimedia 5.0
 Page {
     id: page
 
+    property bool flashlightOn: flashlightSwitch.checked
+
+    onFlashlightOnChanged: {
+        unlockTimer.stop()
+        searchAndLockTimer.stop()
+        if(flashlightOn) {
+            camera.searchAndLock()
+        } else {
+            camera.unlock()
+        }
+    }
+
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
         anchors.fill: parent
@@ -25,6 +37,21 @@ Page {
 
             focus.onFocusModeChanged: {
                 log("focus mode ch to " + focus.focusMode)
+            }
+
+            onLockStatusChanged: {
+                log("lock status ch to " + lockStatus)
+                if(!flashlightOn) {
+                    return;
+                }
+                if(lockStatus === Camera.Unlocked) {
+                    searchAndLockTimer.start()
+                } else if ((lockStatus === Camera.Locked) && (unlockSwitch.checked)) {
+                    unlockTimer.start()
+                } else if ((lockStatus === Camera.Searching) && (!unlockSwitch.checked)) {
+                    unlockTimer.start()
+                }
+
             }
 
             flash.mode: Camera.FlashOn
@@ -85,14 +112,9 @@ Page {
         Timer {
             id: searchAndLockTimer
             interval: parseInt(searchLockSlider.value)
-            repeat: true
             onTriggered: {
                 log("s&L triggered")
                 camera.searchAndLock()
-                if(unlockSwitch.checked)
-                {
-                    unlockTimer.start()
-                }
             }
         }
 
@@ -130,53 +152,39 @@ Page {
                 label: "focus mode"
             }
 
-            Button {
-                text: "Stop searchAndLocking"
-                onClicked: {
-                    searchAndLockTimer.stop()
-                }
-            }
-            Button {
-                text: "Start searchAndLocking every"
-                onClicked: {
-                    searchAndLockTimer.restart()
-                }
+            TextSwitch {
+                id: flashlightSwitch
+                text: "Flashlight on!"
+                checked: false
             }
             Slider {
                 id: searchLockSlider
                 width: parent.width
                 minimumValue: 0
-                maximumValue: 3000
+                maximumValue: 5000
                 value: 200
-                valueText: parseInt(value) + "ms"
+                valueText: "in " + parseInt(value) + "ms"
+                label: "search after status is unlocked"
 
                 Component.onCompleted: {
-                    value = 200
+                    value = 1000
                 }
             }
             TextSwitch {
                 id: unlockSwitch
                 checked: false
-                text: "Unlock after search start in "
+                text: "Unlock after Locked (not just searching)"
             }
             Slider {
                 id: unlockSlider
-                enabled: unlockSwitch.checked
                 width: parent.width
                 minimumValue: 0
-                maximumValue: 500
-                value: 200
-                valueText: parseInt(value) + "ms"
+                maximumValue: 5000
+                value: 3000
+                valueText: "in " + parseInt(value) + "ms after " + (unlockSwitch.checked ? "Locked" : "Searching")
 
                 Component.onCompleted: {
-                    value = 200
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "lightgrey"
-                    opacity: 0.8
-                    visible: !parent.enabled
+                    value = 3000
                 }
             }
 
@@ -185,9 +193,8 @@ Page {
     }
 
     Component.onCompleted: {
-        log("build 9")
-        log("onSupport: " + onSupport)  // <-- API tells it's supported, but it's not
-        log("torchSupport: " + torchSupport)
+        log("build 10")
+        log("FocusContinuous is " + Camera.FocusContinuous)
     }
 
     function log(msg) {
