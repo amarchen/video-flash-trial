@@ -34,6 +34,7 @@
 
 #include <sailfishapp.h>
 
+#include <QCamera>
 
 int main(int argc, char *argv[])
 {
@@ -46,6 +47,21 @@ int main(int argc, char *argv[])
     //
     // To display the view, call "show()" (will show fullscreen on device).
 
-    return SailfishApp::main(argc, argv);
+    QGuiApplication *app = SailfishApp::application(argc, argv);
+        QQuickView *view = SailfishApp::createView();
+        QCamera camera;
+        QCameraExposure* exposure = camera.exposure();
+        bool offSupport = exposure->isFlashModeSupported(QCameraExposure::FlashOff);
+        bool onSupport = exposure->isFlashModeSupported(QCameraExposure::FlashOn); // <-- API tells it's supported, but it's not
+        bool torchSupport = exposure->isFlashModeSupported(QCameraExposure::FlashTorch);
+
+//        MyClass *myclass = new MyClass();
+        view->rootContext()->setContextProperty("offSupport", offSupport);
+        view->rootContext()->setContextProperty("onSupport", onSupport);
+        view->rootContext()->setContextProperty("torchSupport", torchSupport);
+
+    view->setSource(SailfishApp::pathTo("qml/video-flash-trial.qml"));
+        view->showFullScreen();
+        return app->exec();
 }
 

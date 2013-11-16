@@ -42,6 +42,26 @@ Page {
                 log("capture mode ch to " + captureMode)
             }
 
+            onErrorStringChanged: {
+                log("cam error: " + errorString)
+            }
+
+            videoRecorder.onErrorStringChanged: {
+                log("vid err: " + errorString)
+            }
+
+            videoRecorder.onRecorderStateChanged: {
+                log("vid state ch to " + recorderState)
+            }
+
+            videoRecorder.onRecorderStatusChanged: {
+                log("vid status ch to " + recorderStatus)
+            }
+
+            imageCapture.onErrorStringChanged: {
+                log("img err: " + errorString)
+            }
+
             Component.onCompleted: {
                 log("cam init state: ")
                 log("flash ready is " + flash.ready)
@@ -103,16 +123,37 @@ Page {
                 }
             }
             Button {
-                text: "start()"
+                text: "cam start()"
                 onClicked: {
                     camera.start()
                 }
             }
 
             Button {
-                text: "Stop()"
+                text: "cam Stop()"
                 onClicked: {
                     camera.stop()
+                }
+            }
+
+            Button {
+                text: "recorder record()"
+                onClicked: {
+                    camera.videoRecorder.record()
+                }
+            }
+
+            Button {
+                text: "recorder stop()"
+                onClicked: {
+                    camera.videoRecorder.stop()
+                }
+            }
+
+            Button {
+                text: "capture()"
+                onClicked: {
+                    camera.imageCapture.capture()
                 }
             }
 
@@ -126,8 +167,8 @@ Page {
     }
 
     Component.onCompleted: {
-        log("build 5")
-        log("onSupport: " + onSupport)
+        log("build 7")
+        log("onSupport: " + onSupport)  // <-- API tells it's supported, but it's not
         log("torchSupport: " + torchSupport)
     }
 
