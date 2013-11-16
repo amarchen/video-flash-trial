@@ -167,7 +167,7 @@ Page {
     }
 
     Component.onCompleted: {
-        log("build 7")
+        log("build 8")
         log("onSupport: " + onSupport)  // <-- API tells it's supported, but it's not
         log("torchSupport: " + torchSupport)
     }
