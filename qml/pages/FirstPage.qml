@@ -7,6 +7,10 @@ Page {
     id: page
 
     property bool flashlightOn: flashlightSwitch.checked
+    property variant focusModes: [Camera.FocusManual, Camera.FocusHyperfocal, Camera.FocusInfinity,
+        Camera.FocusAuto, Camera.FocusContinuous, Camera.FocusMacro]
+    property variant focusModeNames: ["FocusManual", "FocusHyperfocal", "FocusInfinity",
+        "FocusAuto", "FocusContinuous", "FocusMacro"]
 
     onFlashlightOnChanged: {
         unlockTimer.stop()
@@ -33,7 +37,7 @@ Page {
         Camera {
             id: camera
 
-            focus.focusMode: parseInt(focusModeSwitch.value)
+            focus.focusMode: focusModes[parseInt(focusModeSwitch.value)]
 
             focus.onFocusModeChanged: {
                 log("focus mode ch to " + focus.focusMode)
@@ -146,10 +150,14 @@ Page {
                 id: focusModeSwitch
                 width: parent.width
                 minimumValue: 0
-                maximumValue: 5
+                maximumValue: focusModes.length-1
                 stepSize: 1
-                valueText: value
+                valueText: focusModeNames[parseInt(value)]
                 label: "focus mode"
+
+                onValueChanged: {
+                    log("trying to set focus mode to " + focusModes[parseInt(focusModeSwitch.value)] + " - " + focusModeNames[parseInt(focusModeSwitch.value)] )
+                }
             }
 
             TextSwitch {
@@ -193,8 +201,9 @@ Page {
     }
 
     Component.onCompleted: {
-        log("build 10")
+        log("build 11")
         log("FocusContinuous is " + Camera.FocusContinuous)
+        log("FocusManual is " + Camera.FocusManual)
     }
 
     function log(msg) {
