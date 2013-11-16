@@ -14,7 +14,7 @@ Name:       video-flash-trial
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    My SailfishOS Application
 Version:    0.1
-Release:    8
+Release:    9
 Group:      Qt/Qt
 License:    LICENSE
 Source0:    %{name}-%{version}.tar.bz2

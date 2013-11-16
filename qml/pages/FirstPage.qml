@@ -21,6 +21,12 @@ Page {
         Camera {
             id: camera
 
+            focus.focusMode: parseInt(focusModeSwitch.value)
+
+            focus.onFocusModeChanged: {
+                log("focus mode ch to " + focus.focusMode)
+            }
+
             flash.mode: Camera.FlashOn
             flash.onReadyChanged: {
                 log("flash ready ch to " + flash.ready)
@@ -76,6 +82,29 @@ Page {
         // Tell SilicaFlickable the height of its content.
         contentHeight: column.height
 
+        Timer {
+            id: searchAndLockTimer
+            interval: parseInt(searchLockSlider.value)
+            repeat: true
+            onTriggered: {
+                log("s&L triggered")
+                camera.searchAndLock()
+                if(unlockSwitch.checked)
+                {
+                    unlockTimer.start()
+                }
+            }
+        }
+
+        Timer {
+            id: unlockTimer
+            interval: parseInt(unlockSlider.value)
+            onTriggered: {
+                log("unlock triggered")
+                camera.unlock()
+            }
+        }
+
         // Place our content in a Column.  The PageHeader is always placed at the top
         // of the page, followed by our content.
         Column {
@@ -91,83 +120,72 @@ Page {
                 height: 200
                 width: parent.width
             }
-            Button {
-                text: "cap mode to just viewfinder"
-                onClicked: {
-                    camera.captureMode = Camera.CaptureViewfinder
-                }
-            }
-            Button {
-                text: "cap mode to still img"
-                onClicked: {
-                    camera.captureMode = Camera.CaptureStillImage
-                }
-            }
-            Button {
-                text: "cap mode to video"
-                onClicked: {
-                    camera.captureMode = Camera.CaptureVideo
-                }
-            }
-            Button {
-                text: "Flash to Off"
-                onClicked: {
-                    camera.flash.mode = Camera.FlashOff
-                }
+            Slider {
+                id: focusModeSwitch
+                width: parent.width
+                minimumValue: 0
+                maximumValue: 5
+                stepSize: 1
+                valueText: value
+                label: "focus mode"
             }
 
             Button {
-                text: "Flash to On"
+                text: "Stop searchAndLocking"
                 onClicked: {
-                    camera.flash.mode = Camera.FlashOn
+                    searchAndLockTimer.stop()
                 }
             }
             Button {
-                text: "cam start()"
+                text: "Start searchAndLocking every"
                 onClicked: {
-                    camera.start()
+                    searchAndLockTimer.restart()
+                }
+            }
+            Slider {
+                id: searchLockSlider
+                width: parent.width
+                minimumValue: 0
+                maximumValue: 3000
+                value: 200
+                valueText: parseInt(value) + "ms"
+
+                Component.onCompleted: {
+                    value = 200
+                }
+            }
+            TextSwitch {
+                id: unlockSwitch
+                checked: false
+                text: "Unlock after search start in "
+            }
+            Slider {
+                id: unlockSlider
+                enabled: unlockSwitch.checked
+                width: parent.width
+                minimumValue: 0
+                maximumValue: 500
+                value: 200
+                valueText: parseInt(value) + "ms"
+
+                Component.onCompleted: {
+                    value = 200
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "lightgrey"
+                    opacity: 0.8
+                    visible: !parent.enabled
                 }
             }
 
-            Button {
-                text: "cam Stop()"
-                onClicked: {
-                    camera.stop()
-                }
-            }
 
-            Button {
-                text: "recorder record()"
-                onClicked: {
-                    camera.videoRecorder.record()
-                }
-            }
-
-            Button {
-                text: "recorder stop()"
-                onClicked: {
-                    camera.videoRecorder.stop()
-                }
-            }
-
-            Button {
-                text: "capture()"
-                onClicked: {
-                    camera.imageCapture.capture()
-                }
-            }
-
-            Button {
-                text: "Search and lock"
-                onClicked: {
-                    camera.searchAndLock()
-                }
-            }
         }
     }
 
     Component.onCompleted: {
-        log("build 8")
+        log("build 9")
         log("onSupport: " + onSupport)  // <-- API tells it's supported, but it's not
         log("torchSupport: " + torchSupport)
     }
